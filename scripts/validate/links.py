@@ -50,11 +50,14 @@ def check_duplicate_links(links: List[str]) -> Tuple[bool, List]:
 
     for link in links:
         link = link.rstrip('/')
-        if link not in seen:
-            seen[link] = 1
-        else:
-            if seen[link] == 1:
+        if link  in seen:
+            seen[link] += 1
+        
+            if seen[link] == 2 :
                 duplicates.append(link)
+
+        else:
+            seen[link] = 1        
 
     if duplicates:
         has_duplicate = True
