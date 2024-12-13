@@ -38,31 +38,31 @@ def find_links_in_file(filename: str) -> List[str]:
     return links
 
 
-def check_duplicate_links(links: List[str]) -> Tuple[bool, List]:
+def check_duplicate_links(links: List[str]) -> Tuple[bool, List , List]:
     """Check for duplicated links.
 
     Returns a tuple with True or False and duplicate list.
     """
 
-    seen = {}
-    duplicates = []
+    seen = set()
+    duplicates = set()
     has_duplicate = False
+    cleaned_links = []
 
     for link in links:
         link = link.rstrip('/')
-        if link  in seen:
-            seen[link] += 1
-        
-            if seen[link] == 2 :
-                duplicates.append(link)
+        if link in seen:
+            duplicates.add(link)
 
         else:
-            seen[link] = 1        
+            seen.add(link)
+            cleaned_links.append(link)   
 
+            
     if duplicates:
         has_duplicate = True
 
-    return (has_duplicate, duplicates)
+    return (has_duplicate, list(duplicates) ,cleaned_links)
 
 
 def fake_user_agent() -> str:
@@ -216,7 +216,7 @@ def start_duplicate_links_checker(links: List[str]) -> None:
 
     print('Checking for duplicate links...')
 
-    has_duplicate_link, duplicates_links = check_duplicate_links(links)
+    has_duplicate_link, duplicates_links , cleaned_links = check_duplicate_links(links)
 
     if has_duplicate_link:
         print(f'Found duplicate links:')
@@ -224,9 +224,14 @@ def start_duplicate_links_checker(links: List[str]) -> None:
         for duplicate_link in duplicates_links:
             print(duplicate_link)
 
-        sys.exit(1)
+        
     else:
         print('No duplicate links.')
+
+    print("\nCleaned links (duplicates removed):")
+    for link in cleaned_links:
+        print(link)
+    
 
 
 def start_links_working_checker(links: List[str]) -> None:
